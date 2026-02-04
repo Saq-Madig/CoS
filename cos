@@ -1,4 +1,4 @@
--- Auto Put Item with Loop - Compact Mobile GUI Version
+-- Auto Put Item with Loop - Simple Mobile GUI
 local Player = game:GetService("Players").LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
@@ -7,148 +7,121 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AutoPutGUI"
 screenGui.Parent = PlayerGui
 
--- Create main frame (smaller size)
+-- Create main frame (simple design)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 250, 0, 350)  -- Reduced from 300x400
-mainFrame.Position = UDim2.new(0.5, -125, 0.5, -175)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-mainFrame.BorderSizePixel = 1
-mainFrame.BorderColor3 = Color3.fromRGB(60, 60, 80)
+mainFrame.Size = UDim2.new(0, 220, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -110, 0.5, -150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
--- Add corner rounding
+-- Add subtle corner rounding
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
+corner.CornerRadius = UDim.new(0, 6)
 corner.Parent = mainFrame
 
--- Create minimized frame
-local minimizedFrame = Instance.new("Frame")
-minimizedFrame.Name = "MinimizedFrame"
-minimizedFrame.Size = UDim2.new(0, 100, 0, 50)  -- Smaller minimized frame
-minimizedFrame.Position = UDim2.new(0, 10, 0, 10)
-minimizedFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-minimizedFrame.BorderSizePixel = 1
-minimizedFrame.BorderColor3 = Color3.fromRGB(60, 60, 80)
-minimizedFrame.Visible = false
-minimizedFrame.Parent = screenGui
+-- Add slight shadow effect
+local shadow = Instance.new("UIStroke")
+shadow.Color = Color3.fromRGB(60, 60, 80)
+shadow.Thickness = 2
+shadow.Parent = mainFrame
 
-local minimizedCorner = Instance.new("UICorner")
-minimizedCorner.CornerRadius = UDim.new(0, 8)
-minimizedCorner.Parent = minimizedFrame
+-- Simple title bar
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
 
--- Minimized title
-local minimizedTitle = Instance.new("TextLabel")
-minimizedTitle.Name = "MinimizedTitle"
-minimizedTitle.Size = UDim2.new(1, 0, 0, 25)
-minimizedTitle.Position = UDim2.new(0, 0, 0, 0)
-minimizedTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-minimizedTitle.Text = "Auto Put"
-minimizedTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizedTitle.Font = Enum.Font.GothamBold
-minimizedTitle.TextSize = 14  -- Smaller text
-minimizedTitle.Parent = minimizedFrame
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 6, 0, 0)
+titleCorner.Parent = titleBar
 
-local minimizedTitleCorner = Instance.new("UICorner")
-minimizedTitleCorner.CornerRadius = UDim.new(0, 8)
-minimizedTitleCorner.Parent = minimizedTitle
-
--- Minimized status
-local minimizedStatus = Instance.new("TextLabel")
-minimizedStatus.Name = "MinimizedStatus"
-minimizedStatus.Size = UDim2.new(1, -10, 0, 20)
-minimizedStatus.Position = UDim2.new(0, 5, 0, 28)
-minimizedStatus.BackgroundTransparency = 1
-minimizedStatus.Text = "Stopped"
-minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizedStatus.Font = Enum.Font.Gotham
-minimizedStatus.TextSize = 12  -- Smaller text
-minimizedStatus.TextXAlignment = Enum.TextXAlignment.Left
-minimizedStatus.Parent = minimizedFrame
-
--- Main frame title (smaller)
+-- Title text
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Text = "Auto Put"
-title.Size = UDim2.new(1, 0, 0, 40)  -- Smaller title
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 20  -- Smaller text
-title.Parent = mainFrame
+title.Size = UDim2.new(0.6, 0, 1, 0)
+title.Position = UDim2.new(0.05, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.Font = Enum.Font.GothamMedium
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
 
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 8)
-titleCorner.Parent = title
-
--- Toggle button (smaller)
+-- Main toggle button (simplified)
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleButton"
-toggleButton.Size = UDim2.new(0.9, 0, 0, 50)  -- Smaller button
-toggleButton.Position = UDim2.new(0.05, 0, 0, 50)
-toggleButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+toggleButton.Size = UDim2.new(0.9, 0, 0, 45)
+toggleButton.Position = UDim2.new(0.05, 0, 0, 45)
+toggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
 toggleButton.Text = "START"
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.TextSize = 18  -- Smaller text
+toggleButton.Font = Enum.Font.GothamMedium
+toggleButton.TextSize = 16
 toggleButton.Parent = mainFrame
 
 local toggleCorner = Instance.new("UICorner")
-toggleCorner.CornerRadius = UDim.new(0, 6)
+toggleCorner.CornerRadius = UDim.new(0, 4)
 toggleCorner.Parent = toggleButton
 
--- Status label
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.new(0.9, 0, 0, 25)
-statusLabel.Position = UDim2.new(0.05, 0, 0, 110)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Status: Stopped"
-statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextSize = 14  -- Smaller text
-statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Parent = mainFrame
+-- Simple info display
+local infoFrame = Instance.new("Frame")
+infoFrame.Name = "InfoFrame"
+infoFrame.Size = UDim2.new(0.9, 0, 0, 45)
+infoFrame.Position = UDim2.new(0.05, 0, 0, 100)
+infoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+infoFrame.BorderSizePixel = 0
+infoFrame.Parent = mainFrame
 
--- Count label
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0, 4)
+infoCorner.Parent = infoFrame
+
+-- Current item display
+local currentItemLabel = Instance.new("TextLabel")
+currentItemLabel.Name = "CurrentItemLabel"
+currentItemLabel.Size = UDim2.new(1, 0, 0.5, 0)
+currentItemLabel.Position = UDim2.new(0, 0, 0, 0)
+currentItemLabel.BackgroundTransparency = 1
+currentItemLabel.Text = "Item: Novus"
+currentItemLabel.TextColor3 = Color3.fromRGB(180, 180, 220)
+currentItemLabel.Font = Enum.Font.Gotham
+currentItemLabel.TextSize = 14
+currentItemLabel.TextXAlignment = Enum.TextXAlignment.Center
+currentItemLabel.Parent = infoFrame
+
+-- Count display
 local countLabel = Instance.new("TextLabel")
 countLabel.Name = "CountLabel"
-countLabel.Size = UDim2.new(0.9, 0, 0, 25)
-countLabel.Position = UDim2.new(0.05, 0, 0, 135)
+countLabel.Size = UDim2.new(1, 0, 0.5, 0)
+countLabel.Position = UDim2.new(0, 0, 0.5, 0)
 countLabel.BackgroundTransparency = 1
 countLabel.Text = "Count: 0"
-countLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+countLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 countLabel.Font = Enum.Font.Gotham
-countLabel.TextSize = 12  -- Smaller text
-countLabel.TextXAlignment = Enum.TextXAlignment.Left
-countLabel.Parent = mainFrame
+countLabel.TextSize = 12
+countLabel.TextXAlignment = Enum.TextXAlignment.Center
+countLabel.Parent = infoFrame
 
--- Items selection frame (smaller)
+-- Items selection (simplified grid)
 local itemsFrame = Instance.new("Frame")
 itemsFrame.Name = "ItemsFrame"
-itemsFrame.Size = UDim2.new(0.9, 0, 0, 150)  -- Smaller items frame
-itemsFrame.Position = UDim2.new(0.05, 0, 0, 170)
-itemsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+itemsFrame.Size = UDim2.new(0.9, 0, 0, 125)
+itemsFrame.Position = UDim2.new(0.05, 0, 0, 160)
+itemsFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+itemsFrame.BorderSizePixel = 0
 itemsFrame.Parent = mainFrame
 
 local itemsCorner = Instance.new("UICorner")
-itemsCorner.CornerRadius = UDim.new(0, 6)
+itemsCorner.CornerRadius = UDim.new(0, 4)
 itemsCorner.Parent = itemsFrame
 
--- Items label
-local itemsTitle = Instance.new("TextLabel")
-itemsTitle.Name = "ItemsTitle"
-itemsTitle.Size = UDim2.new(1, 0, 0, 25)
-itemsTitle.Position = UDim2.new(0, 0, 0, 0)
-itemsTitle.BackgroundTransparency = 1
-itemsTitle.Text = "Item:"
-itemsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-itemsTitle.Font = Enum.Font.GothamBold
-itemsTitle.TextSize = 14  -- Smaller text
-itemsTitle.Parent = itemsFrame
-
--- Item options
+-- Item options (now includes Shadow)
 local itemOptions = {
     "Angelic",
     "Ardor", 
@@ -157,116 +130,182 @@ local itemOptions = {
     "Garra",
     "Hellion",
     "Novus",
+    "Shadow",  -- New item added
     "Verdant"
 }
 
 -- Currently selected item
 local selectedItem = "Novus"
 
--- Create buttons for each item (smaller buttons)
-local buttonHeight = 20  -- Smaller buttons
-local buttonSpacing = 4  -- Less spacing
-local startY = 30
+-- Create grid of item buttons (3 columns)
+local buttonSize = 30
+local buttonSpacing = 5
+local columns = 3
 
 for i, itemName in ipairs(itemOptions) do
+    local col = (i - 1) % columns
+    local row = math.floor((i - 1) / columns)
+    
     local itemButton = Instance.new("TextButton")
     itemButton.Name = itemName .. "Button"
-    itemButton.Size = UDim2.new(1, -10, 0, buttonHeight)  -- Smaller width
-    itemButton.Position = UDim2.new(0, 5, 0, startY + ((i-1) * (buttonHeight + buttonSpacing)))
+    itemButton.Size = UDim2.new(0, buttonSize, 0, buttonSize)
+    itemButton.Position = UDim2.new(0, 10 + (col * (buttonSize + buttonSpacing)), 
+                                    0, 10 + (row * (buttonSize + buttonSpacing)))
+    
+    -- Color coding for different items
+    local buttonColor
+    if itemName == "Angelic" then buttonColor = Color3.fromRGB(255, 255, 200)
+    elseif itemName == "Ardor" then buttonColor = Color3.fromRGB(255, 100, 100)
+    elseif itemName == "Boreal" then buttonColor = Color3.fromRGB(100, 200, 255)
+    elseif itemName == "Elgion" then buttonColor = Color3.fromRGB(200, 100, 255)
+    elseif itemName == "Garra" then buttonColor = Color3.fromRGB(255, 150, 50)
+    elseif itemName == "Hellion" then buttonColor = Color3.fromRGB(255, 50, 50)
+    elseif itemName == "Novus" then buttonColor = Color3.fromRGB(100, 200, 100)
+    elseif itemName == "Shadow" then buttonColor = Color3.fromRGB(40, 40, 60)  -- Dark color for Shadow
+    elseif itemName == "Verdant" then buttonColor = Color3.fromRGB(50, 200, 100)
+    else buttonColor = Color3.fromRGB(80, 120, 200) end
     
     if itemName == selectedItem then
-        itemButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+        itemButton.BackgroundColor3 = buttonColor
+        itemButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     else
-        itemButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+        itemButton.BackgroundColor3 = buttonColor
+        itemButton.BackgroundTransparency = 0.6
+        itemButton.TextColor3 = Color3.fromRGB(200, 200, 200)
     end
     
-    itemButton.Text = itemName
-    itemButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    itemButton.Font = Enum.Font.Gotham
-    itemButton.TextSize = 12  -- Smaller text
+    -- Show first 3 letters for compact display
+    itemButton.Text = string.sub(itemName, 1, 3)
+    itemButton.Font = Enum.Font.GothamMedium
+    itemButton.TextSize = 11
     itemButton.Parent = itemsFrame
     
     local buttonCorner = Instance.new("UICorner")
     buttonCorner.CornerRadius = UDim.new(0, 4)
     buttonCorner.Parent = itemButton
     
+    -- Full name tooltip on hover
+    local tooltip = Instance.new("TextLabel")
+    tooltip.Name = "Tooltip"
+    tooltip.Text = itemName
+    tooltip.Size = UDim2.new(0, 60, 0, 20)
+    tooltip.Position = UDim2.new(0, -5, 1, 5)
+    tooltip.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    tooltip.TextColor3 = Color3.fromRGB(220, 220, 220)
+    tooltip.Font = Enum.Font.Gotham
+    tooltip.TextSize = 10
+    tooltip.Visible = false
+    tooltip.Parent = itemButton
+    
+    local tooltipCorner = Instance.new("UICorner")
+    tooltipCorner.CornerRadius = UDim.new(0, 3)
+    tooltipCorner.Parent = tooltip
+    
+    -- Show tooltip on hover
+    itemButton.MouseEnter:Connect(function()
+        tooltip.Visible = true
+    end)
+    
+    itemButton.MouseLeave:Connect(function()
+        tooltip.Visible = false
+    end)
+    
     -- Button click event
     itemButton.MouseButton1Click:Connect(function()
         selectedItem = itemName
-        statusLabel.Text = "Item: " .. selectedItem
+        currentItemLabel.Text = "Item: " .. selectedItem
         
         -- Update all button colors
         for _, optionName in ipairs(itemOptions) do
             local btn = itemsFrame:FindFirstChild(optionName .. "Button")
             if btn then
                 if optionName == selectedItem then
-                    btn.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+                    btn.BackgroundTransparency = 0
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 else
-                    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+                    btn.BackgroundTransparency = 0.6
+                    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
                 end
             end
         end
     end)
 end
 
--- Control buttons (smaller)
-local controlButtonsFrame = Instance.new("Frame")
-controlButtonsFrame.Name = "ControlButtonsFrame"
-controlButtonsFrame.Size = UDim2.new(1, 0, 0, 25)
-controlButtonsFrame.Position = UDim2.new(0, 0, 1, -25)
-controlButtonsFrame.BackgroundTransparency = 1
-controlButtonsFrame.Parent = mainFrame
+-- Simple control buttons
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 25, 0, 25)
+closeButton.Position = UDim2.new(1, -30, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+closeButton.Text = "✕"
+closeButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+closeButton.Font = Enum.Font.GothamMedium
+closeButton.TextSize = 14
+closeButton.Parent = titleBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 4)
+closeCorner.Parent = closeButton
 
 -- Minimize button
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Name = "MinimizeButton"
-minimizeButton.Size = UDim2.new(0, 25, 0, 25)  -- Smaller
-minimizeButton.Position = UDim2.new(0, 5, 0, 0)
-minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
-minimizeButton.Text = "_"
-minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeButton.Font = Enum.Font.GothamBold
-minimizeButton.TextSize = 20  -- Smaller
-minimizeButton.Parent = controlButtonsFrame
+minimizeButton.Size = UDim2.new(0, 25, 0, 25)
+minimizeButton.Position = UDim2.new(1, -60, 0, 5)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+minimizeButton.Text = "─"
+minimizeButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+minimizeButton.Font = Enum.Font.GothamMedium
+minimizeButton.TextSize = 14
+minimizeButton.Parent = titleBar
 
 local minimizeCorner = Instance.new("UICorner")
-minimizeCorner.CornerRadius = UDim.new(0, 12)
+minimizeCorner.CornerRadius = UDim.new(0, 4)
 minimizeCorner.Parent = minimizeButton
 
--- Expand button for minimized frame
+-- Minimized version (simple bar)
+local minimizedBar = Instance.new("Frame")
+minimizedBar.Name = "MinimizedBar"
+minimizedBar.Size = UDim2.new(0, 120, 0, 30)
+minimizedBar.Position = UDim2.new(0, 10, 0, 10)
+minimizedBar.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+minimizedBar.BorderSizePixel = 0
+minimizedBar.Visible = false
+minimizedBar.Parent = screenGui
+
+local minimizedCorner = Instance.new("UICorner")
+minimizedCorner.CornerRadius = UDim.new(0, 4)
+minimizedCorner.Parent = minimizedBar
+
+local minimizedLabel = Instance.new("TextLabel")
+minimizedLabel.Name = "MinimizedLabel"
+minimizedLabel.Size = UDim2.new(0.7, 0, 1, 0)
+minimizedLabel.Position = UDim2.new(0.05, 0, 0, 0)
+minimizedLabel.BackgroundTransparency = 1
+minimizedLabel.Text = "Auto Put: Stopped"
+minimizedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+minimizedLabel.Font = Enum.Font.Gotham
+minimizedLabel.TextSize = 12
+minimizedLabel.TextXAlignment = Enum.TextXAlignment.Left
+minimizedLabel.Parent = minimizedBar
+
 local expandButton = Instance.new("TextButton")
 expandButton.Name = "ExpandButton"
 expandButton.Size = UDim2.new(0, 25, 0, 25)
-expandButton.Position = UDim2.new(0, 5, 0, 0)
-expandButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+expandButton.Position = UDim2.new(1, -30, 0, 2)
+expandButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 expandButton.Text = "□"
-expandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-expandButton.Font = Enum.Font.GothamBold
-expandButton.TextSize = 16  -- Smaller
+expandButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+expandButton.Font = Enum.Font.GothamMedium
+expandButton.TextSize = 12
 expandButton.Visible = false
-expandButton.Parent = minimizedFrame
+expandButton.Parent = minimizedBar
 
 local expandCorner = Instance.new("UICorner")
-expandCorner.CornerRadius = UDim.new(0, 12)
+expandCorner.CornerRadius = UDim.new(0, 4)
 expandCorner.Parent = expandButton
 
--- Close button (smaller)
-local closeButton = Instance.new("TextButton")
-closeButton.Name = "CloseButton"
-closeButton.Size = UDim2.new(0, 25, 0, 25)  -- Smaller
-closeButton.Position = UDim2.new(1, -30, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-closeButton.Text = "X"
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 16  -- Smaller
-closeButton.Parent = controlButtonsFrame
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 12)
-closeCorner.Parent = closeButton
-
--- Make frames draggable
+-- Make windows draggable
 local dragging = false
 local dragStart = nil
 local startPos = nil
@@ -278,7 +317,7 @@ local function updateDrag(input, frame)
 end
 
 -- Main frame drag
-title.InputBegan:Connect(function(input)
+titleBar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
@@ -286,34 +325,34 @@ title.InputBegan:Connect(function(input)
     end
 end)
 
-title.InputChanged:Connect(function(input)
+titleBar.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.Touch then
         updateDrag(input, mainFrame)
     end
 end)
 
-title.InputEnded:Connect(function(input)
+titleBar.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
         dragging = false
     end
 end)
 
--- Minimized frame drag
-minimizedTitle.InputBegan:Connect(function(input)
+-- Minimized bar drag
+minimizedBar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
-        startPos = minimizedFrame.Position
+        startPos = minimizedBar.Position
     end
 end)
 
-minimizedTitle.InputChanged:Connect(function(input)
+minimizedBar.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.Touch then
-        updateDrag(input, minimizedFrame)
+        updateDrag(input, minimizedBar)
     end
 end)
 
-minimizedTitle.InputEnded:Connect(function(input)
+minimizedBar.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
         dragging = false
     end
@@ -322,22 +361,13 @@ end)
 -- Toggle functions
 local function minimizeGUI()
     mainFrame.Visible = false
-    minimizedFrame.Visible = true
+    minimizedBar.Visible = true
     expandButton.Visible = true
-    
-    -- Update minimized status
-    if isRunning then
-        minimizedStatus.Text = selectedItem .. " (" .. putCount .. ")"
-        minimizedStatus.TextColor3 = Color3.fromRGB(60, 220, 60)
-    else
-        minimizedStatus.Text = "Stopped"
-        minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end
 end
 
 local function expandGUI()
     mainFrame.Visible = true
-    minimizedFrame.Visible = false
+    minimizedBar.Visible = false
     expandButton.Visible = false
 end
 
@@ -355,15 +385,15 @@ local isRunning = false
 local putCount = 0
 local remotePath = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("WardenOffering")
 
--- Function to update minimized status
+-- Update minimized status
 local function updateMinimizedStatus()
-    if minimizedFrame.Visible then
+    if minimizedBar.Visible then
         if isRunning then
-            minimizedStatus.Text = selectedItem .. " (" .. putCount .. ")"
-            minimizedStatus.TextColor3 = Color3.fromRGB(60, 220, 60)
+            minimizedLabel.Text = selectedItem .. ": " .. putCount
+            minimizedLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
         else
-            minimizedStatus.Text = "Stopped"
-            minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+            minimizedLabel.Text = "Auto Put: Stopped"
+            minimizedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
         end
     end
 end
@@ -374,26 +404,22 @@ toggleButton.MouseButton1Click:Connect(function()
         -- Stop
         isRunning = false
         toggleButton.Text = "START"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-        statusLabel.Text = "Status: Stopped"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
     else
         -- Start
         isRunning = true
         toggleButton.Text = "STOP"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(60, 220, 60)
-        statusLabel.Text = "Status: Running"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
         
-        -- Reset counter when starting new run
+        -- Reset counter
         putCount = 0
         countLabel.Text = "Count: 0"
         
-        -- Start the loop in a separate coroutine
+        -- Start auto-putting
         spawn(function()
             while isRunning do
-                -- Create args with selected item
                 local args = {selectedItem}
                 
-                -- Invoke the remote
                 local success, result = pcall(function()
                     return remotePath:InvokeServer(unpack(args))
                 end)
@@ -403,32 +429,19 @@ toggleButton.MouseButton1Click:Connect(function()
                     countLabel.Text = "Count: " .. putCount
                     print("[" .. selectedItem .. "] placed " .. putCount .. " times")
                     
-                    -- Update minimized status if visible
                     updateMinimizedStatus()
                 else
-                    statusLabel.Text = "Status: Error"
-                    updateMinimizedStatus()
-                    warn("Error placing item:", result)
+                    warn("Error:", result)
                 end
                 
-                -- Wait before next execution
                 wait(0.5)
             end
         end)
     end
     
-    -- Update minimized status
     updateMinimizedStatus()
 end)
 
--- Update minimized status when item changes
-for _, itemName in ipairs(itemOptions) do
-    local btn = itemsFrame:FindFirstChild(itemName .. "Button")
-    if btn then
-        btn.MouseButton1Click:Connect(updateMinimizedStatus)
-    end
-end
-
-print("Compact Auto Put GUI loaded!")
-print("Window size: 250x350 (Minimized: 100x50)")
-print("Use '_' to minimize, '□' to expand, 'X' to close")
+print("Simple Auto Put GUI loaded!")
+print("Items: " .. table.concat(itemOptions, ", "))
+print("Drag the title bar to move the window")
