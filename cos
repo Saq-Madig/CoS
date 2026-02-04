@@ -1,0 +1,434 @@
+-- Auto Put Item with Loop - Compact Mobile GUI Version
+local Player = game:GetService("Players").LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AutoPutGUI"
+screenGui.Parent = PlayerGui
+
+-- Create main frame (smaller size)
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 250, 0, 350)  -- Reduced from 300x400
+mainFrame.Position = UDim2.new(0.5, -125, 0.5, -175)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+mainFrame.BorderSizePixel = 1
+mainFrame.BorderColor3 = Color3.fromRGB(60, 60, 80)
+mainFrame.Parent = screenGui
+
+-- Add corner rounding
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
+
+-- Create minimized frame
+local minimizedFrame = Instance.new("Frame")
+minimizedFrame.Name = "MinimizedFrame"
+minimizedFrame.Size = UDim2.new(0, 100, 0, 50)  -- Smaller minimized frame
+minimizedFrame.Position = UDim2.new(0, 10, 0, 10)
+minimizedFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+minimizedFrame.BorderSizePixel = 1
+minimizedFrame.BorderColor3 = Color3.fromRGB(60, 60, 80)
+minimizedFrame.Visible = false
+minimizedFrame.Parent = screenGui
+
+local minimizedCorner = Instance.new("UICorner")
+minimizedCorner.CornerRadius = UDim.new(0, 8)
+minimizedCorner.Parent = minimizedFrame
+
+-- Minimized title
+local minimizedTitle = Instance.new("TextLabel")
+minimizedTitle.Name = "MinimizedTitle"
+minimizedTitle.Size = UDim2.new(1, 0, 0, 25)
+minimizedTitle.Position = UDim2.new(0, 0, 0, 0)
+minimizedTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+minimizedTitle.Text = "Auto Put"
+minimizedTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizedTitle.Font = Enum.Font.GothamBold
+minimizedTitle.TextSize = 14  -- Smaller text
+minimizedTitle.Parent = minimizedFrame
+
+local minimizedTitleCorner = Instance.new("UICorner")
+minimizedTitleCorner.CornerRadius = UDim.new(0, 8)
+minimizedTitleCorner.Parent = minimizedTitle
+
+-- Minimized status
+local minimizedStatus = Instance.new("TextLabel")
+minimizedStatus.Name = "MinimizedStatus"
+minimizedStatus.Size = UDim2.new(1, -10, 0, 20)
+minimizedStatus.Position = UDim2.new(0, 5, 0, 28)
+minimizedStatus.BackgroundTransparency = 1
+minimizedStatus.Text = "Stopped"
+minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizedStatus.Font = Enum.Font.Gotham
+minimizedStatus.TextSize = 12  -- Smaller text
+minimizedStatus.TextXAlignment = Enum.TextXAlignment.Left
+minimizedStatus.Parent = minimizedFrame
+
+-- Main frame title (smaller)
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Text = "Auto Put"
+title.Size = UDim2.new(1, 0, 0, 40)  -- Smaller title
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20  -- Smaller text
+title.Parent = mainFrame
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = title
+
+-- Toggle button (smaller)
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ToggleButton"
+toggleButton.Size = UDim2.new(0.9, 0, 0, 50)  -- Smaller button
+toggleButton.Position = UDim2.new(0.05, 0, 0, 50)
+toggleButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+toggleButton.Text = "START"
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = 18  -- Smaller text
+toggleButton.Parent = mainFrame
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 6)
+toggleCorner.Parent = toggleButton
+
+-- Status label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Name = "StatusLabel"
+statusLabel.Size = UDim2.new(0.9, 0, 0, 25)
+statusLabel.Position = UDim2.new(0.05, 0, 0, 110)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: Stopped"
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 14  -- Smaller text
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = mainFrame
+
+-- Count label
+local countLabel = Instance.new("TextLabel")
+countLabel.Name = "CountLabel"
+countLabel.Size = UDim2.new(0.9, 0, 0, 25)
+countLabel.Position = UDim2.new(0.05, 0, 0, 135)
+countLabel.BackgroundTransparency = 1
+countLabel.Text = "Count: 0"
+countLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+countLabel.Font = Enum.Font.Gotham
+countLabel.TextSize = 12  -- Smaller text
+countLabel.TextXAlignment = Enum.TextXAlignment.Left
+countLabel.Parent = mainFrame
+
+-- Items selection frame (smaller)
+local itemsFrame = Instance.new("Frame")
+itemsFrame.Name = "ItemsFrame"
+itemsFrame.Size = UDim2.new(0.9, 0, 0, 150)  -- Smaller items frame
+itemsFrame.Position = UDim2.new(0.05, 0, 0, 170)
+itemsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+itemsFrame.Parent = mainFrame
+
+local itemsCorner = Instance.new("UICorner")
+itemsCorner.CornerRadius = UDim.new(0, 6)
+itemsCorner.Parent = itemsFrame
+
+-- Items label
+local itemsTitle = Instance.new("TextLabel")
+itemsTitle.Name = "ItemsTitle"
+itemsTitle.Size = UDim2.new(1, 0, 0, 25)
+itemsTitle.Position = UDim2.new(0, 0, 0, 0)
+itemsTitle.BackgroundTransparency = 1
+itemsTitle.Text = "Item:"
+itemsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+itemsTitle.Font = Enum.Font.GothamBold
+itemsTitle.TextSize = 14  -- Smaller text
+itemsTitle.Parent = itemsFrame
+
+-- Item options
+local itemOptions = {
+    "Angelic",
+    "Ardor", 
+    "Boreal",
+    "Elgion",
+    "Garra",
+    "Hellion",
+    "Novus",
+    "Verdant"
+}
+
+-- Currently selected item
+local selectedItem = "Novus"
+
+-- Create buttons for each item (smaller buttons)
+local buttonHeight = 20  -- Smaller buttons
+local buttonSpacing = 4  -- Less spacing
+local startY = 30
+
+for i, itemName in ipairs(itemOptions) do
+    local itemButton = Instance.new("TextButton")
+    itemButton.Name = itemName .. "Button"
+    itemButton.Size = UDim2.new(1, -10, 0, buttonHeight)  -- Smaller width
+    itemButton.Position = UDim2.new(0, 5, 0, startY + ((i-1) * (buttonHeight + buttonSpacing)))
+    
+    if itemName == selectedItem then
+        itemButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+    else
+        itemButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    end
+    
+    itemButton.Text = itemName
+    itemButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    itemButton.Font = Enum.Font.Gotham
+    itemButton.TextSize = 12  -- Smaller text
+    itemButton.Parent = itemsFrame
+    
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 4)
+    buttonCorner.Parent = itemButton
+    
+    -- Button click event
+    itemButton.MouseButton1Click:Connect(function()
+        selectedItem = itemName
+        statusLabel.Text = "Item: " .. selectedItem
+        
+        -- Update all button colors
+        for _, optionName in ipairs(itemOptions) do
+            local btn = itemsFrame:FindFirstChild(optionName .. "Button")
+            if btn then
+                if optionName == selectedItem then
+                    btn.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+                else
+                    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+                end
+            end
+        end
+    end)
+end
+
+-- Control buttons (smaller)
+local controlButtonsFrame = Instance.new("Frame")
+controlButtonsFrame.Name = "ControlButtonsFrame"
+controlButtonsFrame.Size = UDim2.new(1, 0, 0, 25)
+controlButtonsFrame.Position = UDim2.new(0, 0, 1, -25)
+controlButtonsFrame.BackgroundTransparency = 1
+controlButtonsFrame.Parent = mainFrame
+
+-- Minimize button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Name = "MinimizeButton"
+minimizeButton.Size = UDim2.new(0, 25, 0, 25)  -- Smaller
+minimizeButton.Position = UDim2.new(0, 5, 0, 0)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+minimizeButton.Text = "_"
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 20  -- Smaller
+minimizeButton.Parent = controlButtonsFrame
+
+local minimizeCorner = Instance.new("UICorner")
+minimizeCorner.CornerRadius = UDim.new(0, 12)
+minimizeCorner.Parent = minimizeButton
+
+-- Expand button for minimized frame
+local expandButton = Instance.new("TextButton")
+expandButton.Name = "ExpandButton"
+expandButton.Size = UDim2.new(0, 25, 0, 25)
+expandButton.Position = UDim2.new(0, 5, 0, 0)
+expandButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+expandButton.Text = "□"
+expandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+expandButton.Font = Enum.Font.GothamBold
+expandButton.TextSize = 16  -- Smaller
+expandButton.Visible = false
+expandButton.Parent = minimizedFrame
+
+local expandCorner = Instance.new("UICorner")
+expandCorner.CornerRadius = UDim.new(0, 12)
+expandCorner.Parent = expandButton
+
+-- Close button (smaller)
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 25, 0, 25)  -- Smaller
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 16  -- Smaller
+closeButton.Parent = controlButtonsFrame
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 12)
+closeCorner.Parent = closeButton
+
+-- Make frames draggable
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+local function updateDrag(input, frame)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, 
+                               startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+-- Main frame drag
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+title.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input, mainFrame)
+    end
+end)
+
+title.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+-- Minimized frame drag
+minimizedTitle.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = minimizedFrame.Position
+    end
+end)
+
+minimizedTitle.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input, minimizedFrame)
+    end
+end)
+
+minimizedTitle.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+-- Toggle functions
+local function minimizeGUI()
+    mainFrame.Visible = false
+    minimizedFrame.Visible = true
+    expandButton.Visible = true
+    
+    -- Update minimized status
+    if isRunning then
+        minimizedStatus.Text = selectedItem .. " (" .. putCount .. ")"
+        minimizedStatus.TextColor3 = Color3.fromRGB(60, 220, 60)
+    else
+        minimizedStatus.Text = "Stopped"
+        minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end
+
+local function expandGUI()
+    mainFrame.Visible = true
+    minimizedFrame.Visible = false
+    expandButton.Visible = false
+end
+
+-- Button events
+minimizeButton.MouseButton1Click:Connect(minimizeGUI)
+expandButton.MouseButton1Click:Connect(expandGUI)
+
+closeButton.MouseButton1Click:Connect(function()
+    isRunning = false
+    screenGui:Destroy()
+end)
+
+-- Auto-put variables
+local isRunning = false
+local putCount = 0
+local remotePath = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("WardenOffering")
+
+-- Function to update minimized status
+local function updateMinimizedStatus()
+    if minimizedFrame.Visible then
+        if isRunning then
+            minimizedStatus.Text = selectedItem .. " (" .. putCount .. ")"
+            minimizedStatus.TextColor3 = Color3.fromRGB(60, 220, 60)
+        else
+            minimizedStatus.Text = "Stopped"
+            minimizedStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end
+    end
+end
+
+-- Toggle function
+toggleButton.MouseButton1Click:Connect(function()
+    if isRunning then
+        -- Stop
+        isRunning = false
+        toggleButton.Text = "START"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+        statusLabel.Text = "Status: Stopped"
+    else
+        -- Start
+        isRunning = true
+        toggleButton.Text = "STOP"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(60, 220, 60)
+        statusLabel.Text = "Status: Running"
+        
+        -- Reset counter when starting new run
+        putCount = 0
+        countLabel.Text = "Count: 0"
+        
+        -- Start the loop in a separate coroutine
+        spawn(function()
+            while isRunning do
+                -- Create args with selected item
+                local args = {selectedItem}
+                
+                -- Invoke the remote
+                local success, result = pcall(function()
+                    return remotePath:InvokeServer(unpack(args))
+                end)
+                
+                if success then
+                    putCount += 1
+                    countLabel.Text = "Count: " .. putCount
+                    print("[" .. selectedItem .. "] placed " .. putCount .. " times")
+                    
+                    -- Update minimized status if visible
+                    updateMinimizedStatus()
+                else
+                    statusLabel.Text = "Status: Error"
+                    updateMinimizedStatus()
+                    warn("Error placing item:", result)
+                end
+                
+                -- Wait before next execution
+                wait(0.5)
+            end
+        end)
+    end
+    
+    -- Update minimized status
+    updateMinimizedStatus()
+end)
+
+-- Update minimized status when item changes
+for _, itemName in ipairs(itemOptions) do
+    local btn = itemsFrame:FindFirstChild(itemName .. "Button")
+    if btn then
+        btn.MouseButton1Click:Connect(updateMinimizedStatus)
+    end
+end
+
+print("Compact Auto Put GUI loaded!")
+print("Window size: 250x350 (Minimized: 100x50)")
+print("Use '_' to minimize, '□' to expand, 'X' to close")
