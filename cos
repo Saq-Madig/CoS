@@ -1,32 +1,30 @@
--- Auto Put & Carcass Farm GUI
+-- Auto Put Item with Loop - Simple Mobile GUI
 local Player = game:GetService("Players").LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local Workspace = game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AutoPutGUI"
 screenGui.Parent = PlayerGui
 
--- Create main frame
+-- Create main frame (simple design)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 240, 0, 340)
-mainFrame.Position = UDim2.new(0.5, -120, 0.5, -170)
+mainFrame.Size = UDim2.new(0, 220, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -110, 0.5, -150)
 mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
 -- Add subtle corner rounding
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
+corner.CornerRadius = UDim.new(0, 6)
 corner.Parent = mainFrame
 
 -- Add slight shadow effect
 local shadow = Instance.new("UIStroke")
 shadow.Color = Color3.fromRGB(60, 60, 80)
-shadow.Thickness = 1
+shadow.Thickness = 2
 shadow.Parent = mainFrame
 
 -- Simple title bar
@@ -39,13 +37,13 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 
 local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 8, 0, 0)
+titleCorner.CornerRadius = UDim.new(0, 6, 0, 0)
 titleCorner.Parent = titleBar
 
 -- Title text
 local title = Instance.new("TextLabel")
 title.Name = "Title"
-title.Text = "Auto Farm"
+title.Text = "Auto Put"
 title.Size = UDim2.new(0.6, 0, 1, 0)
 title.Position = UDim2.new(0.05, 0, 0, 0)
 title.BackgroundTransparency = 1
@@ -55,78 +53,34 @@ title.TextSize = 16
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = titleBar
 
--- Mode selector (Auto Put / Carcass Farm)
-local modeSelector = Instance.new("Frame")
-modeSelector.Name = "ModeSelector"
-modeSelector.Size = UDim2.new(0.9, 0, 0, 35)
-modeSelector.Position = UDim2.new(0.05, 0, 0, 40)
-modeSelector.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
-modeSelector.BorderSizePixel = 0
-modeSelector.Parent = mainFrame
+-- Main toggle button (simplified)
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ToggleButton"
+toggleButton.Size = UDim2.new(0.9, 0, 0, 45)
+toggleButton.Position = UDim2.new(0.05, 0, 0, 45)
+toggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+toggleButton.Text = "START"
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamMedium
+toggleButton.TextSize = 16
+toggleButton.Parent = mainFrame
 
-local modeCorner = Instance.new("UICorner")
-modeCorner.CornerRadius = UDim.new(0, 6)
-modeCorner.Parent = modeSelector
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 4)
+toggleCorner.Parent = toggleButton
 
-local putModeButton = Instance.new("TextButton")
-putModeButton.Name = "PutModeButton"
-putModeButton.Size = UDim2.new(0.5, -2, 1, 0)
-putModeButton.Position = UDim2.new(0, 0, 0, 0)
-putModeButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
-putModeButton.Text = "Auto Put"
-putModeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-putModeButton.Font = Enum.Font.GothamMedium
-putModeButton.TextSize = 14
-putModeButton.Parent = modeSelector
+-- Simple info display
+local infoFrame = Instance.new("Frame")
+infoFrame.Name = "InfoFrame"
+infoFrame.Size = UDim2.new(0.9, 0, 0, 45)
+infoFrame.Position = UDim2.new(0.05, 0, 0, 100)
+infoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+infoFrame.BorderSizePixel = 0
+infoFrame.Parent = mainFrame
 
-local carcassModeButton = Instance.new("TextButton")
-carcassModeButton.Name = "CarcassModeButton"
-carcassModeButton.Size = UDim2.new(0.5, -2, 1, 0)
-carcassModeButton.Position = UDim2.new(0.5, 2, 0, 0)
-carcassModeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-carcassModeButton.Text = "Carcass Farm"
-carcassModeButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-carcassModeButton.Font = Enum.Font.GothamMedium
-carcassModeButton.TextSize = 14
-carcassModeButton.Parent = modeSelector
-
--- Auto Put Content Frame
-local putContent = Instance.new("Frame")
-putContent.Name = "PutContent"
-putContent.Size = UDim2.new(0.9, 0, 0, 230)
-putContent.Position = UDim2.new(0.05, 0, 0, 85)
-putContent.BackgroundTransparency = 1
-putContent.Visible = true
-putContent.Parent = mainFrame
-
--- Main toggle button for Auto Put
-local putToggleButton = Instance.new("TextButton")
-putToggleButton.Name = "PutToggleButton"
-putToggleButton.Size = UDim2.new(1, 0, 0, 45)
-putToggleButton.Position = UDim2.new(0, 0, 0, 0)
-putToggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
-putToggleButton.Text = "START"
-putToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-putToggleButton.Font = Enum.Font.GothamMedium
-putToggleButton.TextSize = 16
-putToggleButton.Parent = putContent
-
-local putToggleCorner = Instance.new("UICorner")
-putToggleCorner.CornerRadius = UDim.new(0, 6)
-putToggleCorner.Parent = putToggleButton
-
--- Simple info display for Auto Put
-local putInfoFrame = Instance.new("Frame")
-putInfoFrame.Name = "PutInfoFrame"
-putInfoFrame.Size = UDim2.new(1, 0, 0, 40)
-putInfoFrame.Position = UDim2.new(0, 0, 0, 55)
-putInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-putInfoFrame.BorderSizePixel = 0
-putInfoFrame.Parent = putContent
-
-local putInfoCorner = Instance.new("UICorner")
-putInfoCorner.CornerRadius = UDim.new(0, 6)
-putInfoCorner.Parent = putInfoFrame
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0, 4)
+infoCorner.Parent = infoFrame
 
 -- Current item display
 local currentItemLabel = Instance.new("TextLabel")
@@ -139,35 +93,35 @@ currentItemLabel.TextColor3 = Color3.fromRGB(180, 180, 220)
 currentItemLabel.Font = Enum.Font.Gotham
 currentItemLabel.TextSize = 14
 currentItemLabel.TextXAlignment = Enum.TextXAlignment.Center
-currentItemLabel.Parent = putInfoFrame
+currentItemLabel.Parent = infoFrame
 
 -- Count display
-local putCountLabel = Instance.new("TextLabel")
-putCountLabel.Name = "PutCountLabel"
-putCountLabel.Size = UDim2.new(1, 0, 0.5, 0)
-putCountLabel.Position = UDim2.new(0, 0, 0.5, 0)
-putCountLabel.BackgroundTransparency = 1
-putCountLabel.Text = "Count: 0"
-putCountLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-putCountLabel.Font = Enum.Font.Gotham
-putCountLabel.TextSize = 12
-putCountLabel.TextXAlignment = Enum.TextXAlignment.Center
-putCountLabel.Parent = putInfoFrame
+local countLabel = Instance.new("TextLabel")
+countLabel.Name = "CountLabel"
+countLabel.Size = UDim2.new(1, 0, 0.5, 0)
+countLabel.Position = UDim2.new(0, 0, 0.5, 0)
+countLabel.BackgroundTransparency = 1
+countLabel.Text = "Count: 0"
+countLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+countLabel.Font = Enum.Font.Gotham
+countLabel.TextSize = 12
+countLabel.TextXAlignment = Enum.TextXAlignment.Center
+countLabel.Parent = infoFrame
 
 -- Items selection (simplified grid)
 local itemsFrame = Instance.new("Frame")
 itemsFrame.Name = "ItemsFrame"
-itemsFrame.Size = UDim2.new(1, 0, 0, 125)
-itemsFrame.Position = UDim2.new(0, 0, 0, 105)
+itemsFrame.Size = UDim2.new(0.9, 0, 0, 125)
+itemsFrame.Position = UDim2.new(0.05, 0, 0, 160)
 itemsFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 itemsFrame.BorderSizePixel = 0
-itemsFrame.Parent = putContent
+itemsFrame.Parent = mainFrame
 
 local itemsCorner = Instance.new("UICorner")
-itemsCorner.CornerRadius = UDim.new(0, 6)
+itemsCorner.CornerRadius = UDim.new(0, 4)
 itemsCorner.Parent = itemsFrame
 
--- Item options
+-- Item options (now includes Shadow)
 local itemOptions = {
     "Angelic",
     "Ardor", 
@@ -176,7 +130,7 @@ local itemOptions = {
     "Garra",
     "Hellion",
     "Novus",
-    "Shadow",
+    "Shadow",  -- New item added
     "Verdant"
 }
 
@@ -207,7 +161,7 @@ for i, itemName in ipairs(itemOptions) do
     elseif itemName == "Garra" then buttonColor = Color3.fromRGB(255, 150, 50)
     elseif itemName == "Hellion" then buttonColor = Color3.fromRGB(255, 50, 50)
     elseif itemName == "Novus" then buttonColor = Color3.fromRGB(100, 200, 100)
-    elseif itemName == "Shadow" then buttonColor = Color3.fromRGB(40, 40, 60)
+    elseif itemName == "Shadow" then buttonColor = Color3.fromRGB(40, 40, 60)  -- Dark color for Shadow
     elseif itemName == "Verdant" then buttonColor = Color3.fromRGB(50, 200, 100)
     else buttonColor = Color3.fromRGB(80, 120, 200) end
     
@@ -277,128 +231,11 @@ for i, itemName in ipairs(itemOptions) do
     end)
 end
 
--- Carcass Farm Content Frame
-local carcassContent = Instance.new("Frame")
-carcassContent.Name = "CarcassContent"
-carcassContent.Size = UDim2.new(0.9, 0, 0, 230)
-carcassContent.Position = UDim2.new(0.05, 0, 0, 95)
-carcassContent.BackgroundTransparency = 1
-carcassContent.Visible = false
-carcassContent.Parent = mainFrame
-
--- Main toggle button for Carcass Farm
-local carcassToggleButton = Instance.new("TextButton")
-carcassToggleButton.Name = "CarcassToggleButton"
-carcassToggleButton.Size = UDim2.new(1, 0, 0, 45)
-carcassToggleButton.Position = UDim2.new(0, 0, 0, 0)
-carcassToggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
-carcassToggleButton.Text = "START FARM"
-carcassToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-carcassToggleButton.Font = Enum.Font.GothamMedium
-carcassToggleButton.TextSize = 16
-carcassToggleButton.Parent = carcassContent
-
-local carcassToggleCorner = Instance.new("UICorner")
-carcassToggleCorner.CornerRadius = UDim.new(0, 6)
-carcassToggleCorner.Parent = carcassToggleButton
-
--- Carcass Farm info display
-local carcassInfoFrame = Instance.new("Frame")
-carcassInfoFrame.Name = "CarcassInfoFrame"
-carcassInfoFrame.Size = UDim2.new(1, 0, 0, 40)
-carcassInfoFrame.Position = UDim2.new(0, 0, 0, 55)
-carcassInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-carcassInfoFrame.BorderSizePixel = 0
-carcassInfoFrame.Parent = carcassContent
-
-local carcassInfoCorner = Instance.new("UICorner")
-carcassInfoCorner.CornerRadius = UDim.new(0, 6)
-carcassInfoCorner.Parent = carcassInfoFrame
-
--- Carcass count display
-local carcassCountLabel = Instance.new("TextLabel")
-carcassCountLabel.Name = "CarcassCountLabel"
-carcassCountLabel.Size = UDim2.new(1, 0, 0.5, 0)
-carcassCountLabel.Position = UDim2.new(0, 0, 0, 0)
-carcassCountLabel.BackgroundTransparency = 1
-carcassCountLabel.Text = "Carcasses: 0"
-carcassCountLabel.TextColor3 = Color3.fromRGB(180, 180, 220)
-carcassCountLabel.Font = Enum.Font.Gotham
-carcassCountLabel.TextSize = 14
-carcassCountLabel.TextXAlignment = Enum.TextXAlignment.Center
-carcassCountLabel.Parent = carcassInfoFrame
-
--- Status display
-local carcassStatusLabel = Instance.new("TextLabel")
-carcassStatusLabel.Name = "CarcassStatusLabel"
-carcassStatusLabel.Size = UDim2.new(1, 0, 0.5, 0)
-carcassStatusLabel.Position = UDim2.new(0, 0, 0.5, 0)
-carcassStatusLabel.BackgroundTransparency = 1
-carcassStatusLabel.Text = "Status: Idle"
-carcassStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-carcassStatusLabel.Font = Enum.Font.Gotham
-carcassStatusLabel.TextSize = 12
-carcassStatusLabel.TextXAlignment = Enum.TextXAlignment.Center
-carcassStatusLabel.Parent = carcassInfoFrame
-
--- Carcass Farm settings
-local settingsFrame = Instance.new("Frame")
-settingsFrame.Name = "SettingsFrame"
-settingsFrame.Size = UDim2.new(1, 0, 0, 125)
-settingsFrame.Position = UDim2.new(0, 0, 0, 105)
-settingsFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-settingsFrame.BorderSizePixel = 0
-settingsFrame.Parent = carcassContent
-
-local settingsCorner = Instance.new("UICorner")
-settingsCorner.CornerRadius = UDim.new(0, 6)
-settingsCorner.Parent = settingsFrame
-
--- Settings title
-local settingsTitle = Instance.new("TextLabel")
-settingsTitle.Name = "SettingsTitle"
-settingsTitle.Text = "Carcass Farm Settings"
-settingsTitle.Size = UDim2.new(1, 0, 0, 25)
-settingsTitle.Position = UDim2.new(0, 0, 0, 0)
-settingsTitle.BackgroundTransparency = 1
-settingsTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
-settingsTitle.Font = Enum.Font.GothamMedium
-settingsTitle.TextSize = 14
-settingsTitle.Parent = settingsFrame
-
--- Auto-join on death toggle
-local autoJoinLabel = Instance.new("TextLabel")
-autoJoinLabel.Name = "AutoJoinLabel"
-autoJoinLabel.Text = "Auto-Rejoin:"
-autoJoinLabel.Size = UDim2.new(0.7, 0, 0, 25)
-autoJoinLabel.Position = UDim2.new(0, 10, 0, 30)
-autoJoinLabel.BackgroundTransparency = 1
-autoJoinLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-autoJoinLabel.Font = Enum.Font.Gotham
-autoJoinLabel.TextSize = 12
-autoJoinLabel.TextXAlignment = Enum.TextXAlignment.Left
-autoJoinLabel.Parent = settingsFrame
-
-local autoJoinToggle = Instance.new("TextButton")
-autoJoinToggle.Name = "AutoJoinToggle"
-autoJoinToggle.Size = UDim2.new(0, 40, 0, 20)
-autoJoinToggle.Position = UDim2.new(0.7, 10, 0, 33)
-autoJoinToggle.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
-autoJoinToggle.Text = "ON"
-autoJoinToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-autoJoinToggle.Font = Enum.Font.Gotham
-autoJoinToggle.TextSize = 10
-autoJoinToggle.Parent = settingsFrame
-
-local autoJoinCorner = Instance.new("UICorner")
-autoJoinCorner.CornerRadius = UDim.new(0, 4)
-autoJoinCorner.Parent = autoJoinToggle
-
--- Control buttons
+-- Simple control buttons
 local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
 closeButton.Size = UDim2.new(0, 25, 0, 25)
-closeButton.Position = UDim2.new(1, -30, 0, 7)
+closeButton.Position = UDim2.new(1, -30, 0, 5)
 closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 closeButton.Text = "✕"
 closeButton.TextColor3 = Color3.fromRGB(220, 220, 220)
@@ -414,7 +251,7 @@ closeCorner.Parent = closeButton
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Name = "MinimizeButton"
 minimizeButton.Size = UDim2.new(0, 25, 0, 25)
-minimizeButton.Position = UDim2.new(1, -60, 0, 7)
+minimizeButton.Position = UDim2.new(1, -60, 0, 5)
 minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 minimizeButton.Text = "─"
 minimizeButton.TextColor3 = Color3.fromRGB(220, 220, 220)
@@ -426,10 +263,10 @@ local minimizeCorner = Instance.new("UICorner")
 minimizeCorner.CornerRadius = UDim.new(0, 4)
 minimizeCorner.Parent = minimizeButton
 
--- Minimized version
+-- Minimized version (simple bar)
 local minimizedBar = Instance.new("Frame")
 minimizedBar.Name = "MinimizedBar"
-minimizedBar.Size = UDim2.new(0, 130, 0, 35)
+minimizedBar.Size = UDim2.new(0, 120, 0, 30)
 minimizedBar.Position = UDim2.new(0, 10, 0, 10)
 minimizedBar.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
 minimizedBar.BorderSizePixel = 0
@@ -437,25 +274,25 @@ minimizedBar.Visible = false
 minimizedBar.Parent = screenGui
 
 local minimizedCorner = Instance.new("UICorner")
-minimizedCorner.CornerRadius = UDim.new(0, 6)
+minimizedCorner.CornerRadius = UDim.new(0, 4)
 minimizedCorner.Parent = minimizedBar
 
-local minimizedTitle = Instance.new("TextLabel")
-minimizedTitle.Name = "MinimizedTitle"
-minimizedTitle.Size = UDim2.new(0.7, 0, 1, 0)
-minimizedTitle.Position = UDim2.new(0.05, 0, 0, 0)
-minimizedTitle.BackgroundTransparency = 1
-minimizedTitle.Text = "Doopiedie Script"
-minimizedTitle.TextColor3 = Color3.fromRGB(220, 180, 100)
-minimizedTitle.Font = Enum.Font.GothamMedium
-minimizedTitle.TextSize = 12
-minimizedTitle.TextXAlignment = Enum.TextXAlignment.Left
-minimizedTitle.Parent = minimizedBar
+local minimizedLabel = Instance.new("TextLabel")
+minimizedLabel.Name = "MinimizedLabel"
+minimizedLabel.Size = UDim2.new(0.7, 0, 1, 0)
+minimizedLabel.Position = UDim2.new(0.05, 0, 0, 0)
+minimizedLabel.BackgroundTransparency = 1
+minimizedLabel.Text = "Auto Put: Stopped"
+minimizedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+minimizedLabel.Font = Enum.Font.Gotham
+minimizedLabel.TextSize = 12
+minimizedLabel.TextXAlignment = Enum.TextXAlignment.Left
+minimizedLabel.Parent = minimizedBar
 
 local expandButton = Instance.new("TextButton")
 expandButton.Name = "ExpandButton"
 expandButton.Size = UDim2.new(0, 25, 0, 25)
-expandButton.Position = UDim2.new(1, -30, 0, 5)
+expandButton.Position = UDim2.new(1, -30, 0, 2)
 expandButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 expandButton.Text = "□"
 expandButton.TextColor3 = Color3.fromRGB(220, 220, 220)
@@ -468,306 +305,6 @@ local expandCorner = Instance.new("UICorner")
 expandCorner.CornerRadius = UDim.new(0, 4)
 expandCorner.Parent = expandButton
 
--- ========== AUTO PUT FUNCTIONALITY ==========
-local isPutRunning = false
-local putCount = 0
-local remotePath = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("WardenOffering")
-
--- Auto Put toggle function
-putToggleButton.MouseButton1Click:Connect(function()
-    if isPutRunning then
-        -- Stop
-        isPutRunning = false
-        putToggleButton.Text = "START"
-        putToggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
-    else
-        -- Start
-        isPutRunning = true
-        putToggleButton.Text = "STOP"
-        putToggleButton.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
-        
-        -- Reset counter
-        putCount = 0
-        putCountLabel.Text = "Count: 0"
-        
-        -- Start auto-putting
-        spawn(function()
-            while isPutRunning do
-                local args = {selectedItem}
-                
-                local success, result = pcall(function()
-                    return remotePath:InvokeServer(unpack(args))
-                end)
-                
-                if success then
-                    putCount += 1
-                    putCountLabel.Text = "Count: " .. putCount
-                    print("[Doopiedie] [" .. selectedItem .. "] placed " .. putCount .. " times")
-                else
-                    warn("[Doopiedie] Error:", result)
-                end
-                
-                wait(0.5)
-            end
-        end)
-    end
-end)
-
--- ========== CARCASS FARM FUNCTIONALITY ==========
-local isCarcassRunning = false
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
--- Get remotes for carcass
-local FoodChunkRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodChunk")
-local FoodPickupRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodPickup")
-
--- Carcass farming functions
-local function findCarcasses()
-    local carcasses = {}
-    
-    local success, foodFolder = pcall(function()
-        return Workspace.Interactions.Food
-    end)
-    
-    if success and foodFolder then
-        local carcass = foodFolder:FindFirstChild("Carcass")
-        if carcass then
-            if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                table.insert(carcasses, {Object = carcass, Name = "Carcass"})
-            elseif carcass:IsA("Folder") then
-                for _, item in pairs(carcass:GetChildren()) do
-                    if item:IsA("BasePart") then
-                        table.insert(carcasses, {Object = item, Name = "Carcass"})
-                    end
-                end
-            end
-        end
-        
-        local specialCarcasses = {
-            "Carnivore Carcass",
-            "Herbivore Carcass", 
-            "NPC Carcass",
-            "Omnivore Carcass"
-        }
-        
-        for _, carcassName in pairs(specialCarcasses) do
-            local carcass = foodFolder:FindFirstChild(carcassName)
-            if carcass then
-                if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                    table.insert(carcasses, {Object = carcass, Name = carcassName})
-                elseif carcass:IsA("Folder") then
-                    for _, item in pairs(carcass:GetChildren()) do
-                        if item:IsA("BasePart") then
-                            table.insert(carcasses, {Object = item, Name = carcassName})
-                        end
-                    end
-                end
-            end
-        end
-        
-        for _, item in pairs(foodFolder:GetChildren()) do
-            if item:IsA("BasePart") and string.find(item.Name:lower(), "carcass") then
-                table.insert(carcasses, {Object = item, Name = item.Name})
-            elseif item:IsA("Model") then
-                for _, part in pairs(item:GetChildren()) do
-                    if part:IsA("BasePart") then
-                        table.insert(carcasses, {Object = part, Name = item.Name})
-                        break
-                    end
-                end
-            end
-        end
-    end
-    
-    return carcasses
-end
-
-local function getCarcassPosition(carcass)
-    if carcass:IsA("BasePart") then
-        return carcass.Position
-    elseif carcass:IsA("Model") then
-        if carcass.PrimaryPart then
-            return carcass.PrimaryPart.Position
-        else
-            for _, part in pairs(carcass:GetChildren()) do
-                if part:IsA("BasePart") then
-                    return part.Position
-                end
-            end
-        end
-    end
-    return nil
-end
-
-local function teleportTo(position)
-    if humanoidRootPart and position then
-        if not character or not character.Parent then
-            character = player.Character or player.CharacterAdded:Wait()
-            humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-        end
-        
-        humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
-        task.wait(0.2)
-        return true
-    end
-    return false
-end
-
-local function pickupCarcass(carcassName, carcassObject)
-    if string.find(carcassName:lower(), "carcass") then
-        if carcassName == "Carcass" then
-            local args = {carcassObject}
-            local success, result = pcall(function()
-                return FoodChunkRemote:InvokeServer(unpack(args))
-            end)
-            if success then
-                return true, "Picked up Carcass"
-            end
-        else
-            local args = {carcassObject}
-            local success, result = pcall(function()
-                return FoodPickupRemote:InvokeServer(unpack(args))
-            end)
-            if success then
-                return true, "Picked up " .. carcassName
-            end
-        end
-    end
-    return false, "Failed to pick up"
-end
-
--- Update carcass count display
-local function updateCarcassCount()
-    local carcasses = findCarcasses()
-    carcassCountLabel.Text = "Carcasses: " .. #carcasses
-    return #carcasses
-end
-
--- Carcass farm loop
-local function carcassFarmLoop()
-    while isCarcassRunning do
-        if not character or not character.Parent then
-            character = player.Character or player.CharacterAdded:Wait()
-            humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-        end
-        
-        local carcasses = findCarcasses()
-        local carcassCount = #carcasses
-        
-        if carcassCount > 0 then
-            carcassStatusLabel.Text = "Status: Farming"
-            carcassStatusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
-            
-            for _, carcassData in pairs(carcasses) do
-                if not isCarcassRunning then break end
-                
-                local carcass = carcassData.Object
-                if carcass and carcass.Parent then
-                    local position = getCarcassPosition(carcass)
-                    if position then
-                        local teleported = teleportTo(position)
-                        
-                        if teleported then
-                            task.wait(0.3)
-                            local success, message = pickupCarcass(carcassData.Name, carcass)
-                            if success then
-                                print("[Doopiedie] ✓ " .. message)
-                                updateCarcassCount()
-                            end
-                            task.wait(0.5)
-                        end
-                    end
-                end
-            end
-        else
-            carcassStatusLabel.Text = "Status: Searching..."
-            carcassStatusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
-            print("[Doopiedie] No carcasses found")
-        end
-        
-        task.wait(3)
-    end
-    carcassStatusLabel.Text = "Status: Stopped"
-    carcassStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-end
-
--- Carcass toggle function
-carcassToggleButton.MouseButton1Click:Connect(function()
-    if isCarcassRunning then
-        -- Stop
-        isCarcassRunning = false
-        carcassToggleButton.Text = "START FARM"
-        carcassToggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
-        carcassStatusLabel.Text = "Status: Stopped"
-    else
-        -- Start
-        isCarcassRunning = true
-        carcassToggleButton.Text = "STOP FARM"
-        carcassToggleButton.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
-        carcassStatusLabel.Text = "Status: Starting..."
-        
-        -- Update count
-        updateCarcassCount()
-        
-        -- Start farming
-        spawn(carcassFarmLoop)
-    end
-end)
-
--- Auto-join toggle
-local autoJoinEnabled = true
-autoJoinToggle.MouseButton1Click:Connect(function()
-    autoJoinEnabled = not autoJoinEnabled
-    if autoJoinEnabled then
-        autoJoinToggle.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
-        autoJoinToggle.Text = "ON"
-    else
-        autoJoinToggle.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
-        autoJoinToggle.Text = "OFF"
-    end
-end)
-
--- Character auto-rejoin
-if autoJoinEnabled then
-    player.CharacterAdded:Connect(function(newChar)
-        character = newChar
-        humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
-        print("[Doopiedie] Character rejoined, farming resumed")
-    end)
-end
-
--- ========== MODE SWITCHING ==========
-local currentMode = "put"
-
-local function switchToPutMode()
-    currentMode = "put"
-    putContent.Visible = true
-    carcassContent.Visible = false
-    putModeButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
-    putModeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    carcassModeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-    carcassModeButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-end
-
-local function switchToCarcassMode()
-    currentMode = "carcass"
-    putContent.Visible = false
-    carcassContent.Visible = true
-    putModeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-    putModeButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-    carcassModeButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
-    carcassModeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    
-    -- Update carcass count when switching to this mode
-    updateCarcassCount()
-end
-
-putModeButton.MouseButton1Click:Connect(switchToPutMode)
-carcassModeButton.MouseButton1Click:Connect(switchToCarcassMode)
-
--- ========== WINDOW CONTROLS ==========
 -- Make windows draggable
 local dragging = false
 local dragStart = nil
@@ -834,59 +371,77 @@ local function expandGUI()
     expandButton.Visible = false
 end
 
+-- Button events
 minimizeButton.MouseButton1Click:Connect(minimizeGUI)
 expandButton.MouseButton1Click:Connect(expandGUI)
 
 closeButton.MouseButton1Click:Connect(function()
-    isPutRunning = false
-    isCarcassRunning = false
+    isRunning = false
     screenGui:Destroy()
 end)
 
--- Update minimized window
-local function updateMinimizedWindow()
+-- Auto-put variables
+local isRunning = false
+local putCount = 0
+local remotePath = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("WardenOffering")
+
+-- Update minimized status
+local function updateMinimizedStatus()
     if minimizedBar.Visible then
-        if currentMode == "put" and isPutRunning then
-            minimizedTitle.Text = "Doopiedie: " .. selectedItem .. " (" .. putCount .. ")"
-            minimizedTitle.TextColor3 = Color3.fromRGB(100, 200, 100)
-        elseif currentMode == "carcass" and isCarcassRunning then
-            local carcasses = findCarcasses()
-            minimizedTitle.Text = "Doopiedie: Carcass (" .. #carcasses .. ")"
-            minimizedTitle.TextColor3 = Color3.fromRGB(255, 200, 100)
+        if isRunning then
+            minimizedLabel.Text = selectedItem .. ": " .. putCount
+            minimizedLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
         else
-            minimizedTitle.Text = "Doopiedie Script"
-            minimizedTitle.TextColor3 = Color3.fromRGB(220, 180, 100)
+            minimizedLabel.Text = "Auto Put: Stopped"
+            minimizedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
         end
     end
 end
 
--- Periodically update minimized window
-spawn(function()
-    while true do
-        updateMinimizedWindow()
-        wait(2)
+-- Toggle function
+toggleButton.MouseButton1Click:Connect(function()
+    if isRunning then
+        -- Stop
+        isRunning = false
+        toggleButton.Text = "START"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+    else
+        -- Start
+        isRunning = true
+        toggleButton.Text = "STOP"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
+        
+        -- Reset counter
+        putCount = 0
+        countLabel.Text = "Count: 0"
+        
+        -- Start auto-putting
+        spawn(function()
+            while isRunning do
+                local args = {selectedItem}
+                
+                local success, result = pcall(function()
+                    return remotePath:InvokeServer(unpack(args))
+                end)
+                
+                if success then
+                    putCount += 1
+                    countLabel.Text = "Count: " .. putCount
+                    print("[" .. selectedItem .. "] placed " .. putCount .. " times")
+                    
+                    updateMinimizedStatus()
+                else
+                    warn("Error:", result)
+                end
+                
+                wait(0.5)
+            end
+        end)
     end
+    
+    updateMinimizedStatus()
 end)
 
--- Initial carcass count update
-updateCarcassCount()
-
-print("========================================")
-print("Doopiedie Script Loaded Successfully!")
-print("Features:")
-print("- Auto Put Items (9 types including Shadow)")
-print("- Auto Carcass Farm with Teleport")
-print("- Simple Mobile-Friendly GUI")
-print("========================================")
-```
-
-Changes Made:
-
-1. Added "Doopiedie Script" as the main title in a beautiful gold color
-2. Added "Auto Farm System" as a subtitle
-3. Updated minimized window to show "Doopiedie Script"
-4. Enhanced console messages to show "[Doopiedie]" prefix for all outputs
-5. Both modes work independently - you can switch between Auto Put and Carcass Farm
-6. All original functionality preserved with your branding
-
-Your GUI now proudly displays "Doopiedie Script" at the top! The gold color makes it stand out and gives it a professional, custom look. Both farming modes work perfectly with your branding.
+print("Simple Auto Put GUI loaded!")
+print("Items: " .. table.concat(itemOptions, ", "))
+print("Drag the title bar to move the window")
