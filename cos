@@ -448,7 +448,7 @@ print("Drag the title bar to move the window")
 
 
 
--- Auto Carcass Farm Script - Simple Mobile GUI
+-- Auto Carcass Farm Script - Fast Version
 -- Execute with your executor
 
 if not game:IsLoaded() then
@@ -589,8 +589,8 @@ local function teleportTo(position)
             humanoidRootPart = character:WaitForChild("HumanoidRootPart")
         end
         
+        -- FAST teleport (reduced wait time)
         humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
-        task.wait(0.2)
         return true
     end
     return false
@@ -624,6 +624,7 @@ local function farmLoop()
         
         local carcasses = findCarcasses()
         
+        -- Update GUI
         if isMinimized then
             StatusText.Text = isFarming and #carcasses .. " 🍖" or "OFF"
         else
@@ -638,18 +639,20 @@ local function farmLoop()
                 if carcass and carcass.Parent then
                     local position = getCarcassPosition(carcass)
                     if position then
+                        -- FAST teleport sequence
                         local teleported = teleportTo(position)
                         if teleported then
-                            task.wait(0.3)
+                            task.wait(0.1) -- After teleport (FAST)
                             pickupCarcass(carcassData.Name, carcass)
-                            task.wait(0.5)
+                            task.wait(0.1) -- After pickup (FAST)
                         end
                     end
                 end
             end
+        else
+            -- No carcasses found, wait a bit
+            task.wait(0.5) -- FAST search cycle
         end
-        
-        task.wait(3)
     end
     
     -- Update button when stopped
@@ -665,7 +668,7 @@ local function toggleFarming()
     
     if isFarming then
         MainButton.BackgroundColor3 = Color3.fromRGB(215, 60, 0)
-        print("Auto Farm STARTED")
+        print("⚡ FAST Auto Farm STARTED")
         coroutine.wrap(farmLoop)()
     else
         MainButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
@@ -726,7 +729,9 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 print("========================================")
-print("Simple Auto Farm Loaded!")
+print("⚡ FAST Auto Farm Loaded!")
+print("Timing: Teleport(0.1s) → Pickup(0.1s) → Next")
+print("Search cycle: 0.5s when no carcasses")
 print("Controls:")
 print("1. Click button to Start/Stop")
 print("2. Drag button to move")
