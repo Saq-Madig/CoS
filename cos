@@ -562,31 +562,17 @@ local function findCarcasses()
     end)
     
     if success and foodFolder then
-        -- First, check for regular "Carcass"
-        local carcass = foodFolder:FindFirstChild("Carcass")
-        if carcass then
-            -- Check if it's a model/part or a folder
-            if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                table.insert(carcasses, {Object = carcass, Name = "Carcass"})
-            elseif carcass:IsA("Folder") then
-                -- If it's a folder, get all parts inside
-                for _, item in pairs(carcass:GetChildren()) do
-                    if item:IsA("BasePart") then
-                        table.insert(carcasses, {Object = item, Name = "Carcass"})
-                    end
-                end
-            end
-        end
-        
-        -- Check for special carcasses
-        local specialCarcasses = {
+        -- Check for all carcass types
+        local carcassTypes = {
+            "Carcass",
             "Carnivore Carcass",
             "Herbivore Carcass", 
             "NPC Carcass",
-            "Omnivore Carcass"
+            "Omnivore Carcass",
+            "Sea Carcass"
         }
         
-        for _, carcassName in pairs(specialCarcasses) do
+        for _, carcassName in pairs(carcassTypes) do
             local carcass = foodFolder:FindFirstChild(carcassName)
             if carcass then
                 if carcass:IsA("Model") or carcass:IsA("BasePart") then
@@ -650,7 +636,7 @@ local function teleportTo(position)
         
         -- Teleport slightly above the position
         humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
-        task.wait(1.5) -- CHANGED: Wait 1.5 seconds for teleport
+        task.wait(1.5) -- Changed from 0.2 to 1.5 seconds as requested
         return true
     end
     return false
@@ -702,6 +688,12 @@ local function farmLoop()
         
         if #carcasses > 0 then
             print("Found " .. #carcasses .. " carcass(es)")
+            
+            -- Shuffle the carcasses array for random order
+            for i = #carcasses, 2, -1 do
+                local j = math.random(i)
+                carcasses[i], carcasses[j] = carcasses[j], carcasses[i]
+            end
             
             for _, carcassData in pairs(carcasses) do
                 if not isFarming then break end
@@ -814,6 +806,10 @@ coroutine.wrap(testPath)()
 print("========================================")
 print("Auto Carcass Farm Script Loaded!")
 print("Path: workspace.Interactions.Food")
+print("Features:")
+print("1. Teleport delay: 1.5 seconds")
+print("2. Random order between all carcass types")
+print("3. Searches for: Carcass, Carnivore, Herbivore, Omnivore, Sea & NPC Carcasses")
 print("Controls:")
 print("1. Use GUI buttons")
 print("2. Press F key to toggle farming")
