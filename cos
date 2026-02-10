@@ -434,7 +434,7 @@ toggleButton.MouseButton1Click:Connect(function()
                     warn("Error:", result)
                 end
                 
-                wait(0.5)
+                wait(1)  -- CHANGED FROM 0.5 TO 1
             end
         end)
     end
