@@ -434,7 +434,7 @@ toggleButton.MouseButton1Click:Connect(function()
                     warn("Error:", result)
                 end
                 
-                wait(0.5)
+                wait(1) -- CHANGED FROM 0.5 TO 1 SECOND
             end
         end)
     end
@@ -449,7 +449,12 @@ print("Drag the title bar to move the window")
 
 
 
--- Auto Carcass Farm Script - Simple Mobile GUI
+
+
+
+
+
+-- Auto Carcass Farm Script - Fixed Version
 -- Execute with your executor
 
 if not game:IsLoaded() then
@@ -464,82 +469,148 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
--- Get remotes
-local FoodChunkRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodChunk")
-local FoodPickupRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodPickup")
+-- Check for remotes
+local FoodChunkRemote
+local FoodPickupRemote
 
--- Create simple mobile GUI
+if ReplicatedStorage:FindFirstChild("Remotes") then
+    if ReplicatedStorage.Remotes:FindFirstChild("FoodChunk") then
+        FoodChunkRemote = ReplicatedStorage.Remotes.FoodChunk
+    end
+    if ReplicatedStorage.Remotes:FindFirstChild("FoodPickup") then
+        FoodPickupRemote = ReplicatedStorage.Remotes.FoodPickup
+    end
+end
+
+-- If remotes not found, wait for them
+if not FoodChunkRemote then
+    FoodChunkRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodChunk")
+end
+
+if not FoodPickupRemote then
+    FoodPickupRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("FoodPickup")
+end
+
+-- Create GUI
 local ScreenGui = Instance.new("ScreenGui")
-local MainButton = Instance.new("TextButton")
-local MinimizeButton = Instance.new("TextButton")
-local StatusText = Instance.new("TextLabel")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local StatusLabel = Instance.new("TextLabel")
+local ToggleButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
 
-ScreenGui.Name = "AutoFarmMobileGUI"
+ScreenGui.Name = "AutoCarcassFarmGUI"
 ScreenGui.Parent = game:GetService("CoreGui") or player:WaitForChild("PlayerGui")
 
--- Main toggle button (draggable)
-MainButton.Name = "MainButton"
-MainButton.Size = UDim2.new(0, 100, 0, 40)
-MainButton.Position = UDim2.new(0, 20, 0.5, -20)
-MainButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-MainButton.Text = "START"
-MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MainButton.Font = Enum.Font.GothamBold
-MainButton.TextSize = 14
-MainButton.Active = true
-MainButton.Draggable = true
-MainButton.Parent = ScreenGui
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(0, 170, 255)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
--- Small minimize button
-MinimizeButton.Name = "MinimizeButton"
-MinimizeButton.Size = UDim2.new(0, 20, 0, 20)
-MinimizeButton.Position = UDim2.new(0, 100, 0, 0)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MinimizeButton.Text = "_"
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeButton.Font = Enum.Font.GothamBold
-MinimizeButton.TextSize = 14
-MinimizeButton.Parent = MainButton
-MinimizeButton.Visible = false
+Title.Name = "Title"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+Title.Text = "Auto Carcass Farm"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Parent = MainFrame
 
--- Status text (minimized view)
-StatusText.Name = "StatusText"
-StatusText.Size = UDim2.new(1, 0, 1, 0)
-StatusText.BackgroundTransparency = 1
-StatusText.Text = "OFF"
-StatusText.TextColor3 = Color3.fromRGB(255, 255, 255)
-StatusText.Font = Enum.Font.GothamBold
-StatusText.TextSize = 12
-StatusText.Parent = MainButton
-StatusText.Visible = false
+StatusLabel.Name = "StatusLabel"
+StatusLabel.Size = UDim2.new(1, -20, 0, 50)
+StatusLabel.Position = UDim2.new(0, 10, 0, 40)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Status: Ready\nCarcasses: 0"
+StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.TextSize = 14
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatusLabel.TextYAlignment = Enum.TextYAlignment.Top
+StatusLabel.Parent = MainFrame
+
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Size = UDim2.new(0.6, 0, 0, 40)
+ToggleButton.Position = UDim2.new(0.2, 0, 0.6, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+ToggleButton.Text = "START FARMING"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextSize = 16
+ToggleButton.Parent = MainFrame
+
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 16
+CloseButton.Parent = MainFrame
 
 -- Farming variables
 local isFarming = false
-local isMinimized = false
+local processedCarcasses = {}
+local lastDetectionTime = 0
+local teleportDelay = 1.5 -- Changed to 1.5 seconds
+
+local function getRandomOffset()
+    -- Generate random offset between -2 and 2 on X and Z axes
+    return Vector3.new(
+        math.random(-200, 200) / 100, -- -2 to 2
+        5, -- Always 5 units above
+        math.random(-200, 200) / 100  -- -2 to 2
+    )
+end
+
+local function getCarcassPath(carcass)
+    -- Get the full path of the carcass for tracking
+    local path = ""
+    local parent = carcass
+    
+    while parent and parent ~= Workspace do
+        path = parent.Name .. "/" .. path
+        parent = parent.Parent
+    end
+    
+    return "Workspace/" .. path .. carcass.Name
+end
 
 local function findCarcasses()
     local carcasses = {}
+    processedCarcasses = {}
     
+    -- Check if the food folder exists
     local success, foodFolder = pcall(function()
         return Workspace.Interactions.Food
     end)
     
     if success and foodFolder then
-        -- Regular Carcass
+        -- First, check for regular "Carcass"
         local carcass = foodFolder:FindFirstChild("Carcass")
         if carcass then
+            -- Check if it's a model/part or a folder
             if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                table.insert(carcasses, {Object = carcass, Name = "Carcass"})
+                local path = getCarcassPath(carcass)
+                table.insert(carcasses, {Object = carcass, Name = "Carcass", Path = path})
             elseif carcass:IsA("Folder") then
+                -- If it's a folder, get all parts inside
                 for _, item in pairs(carcass:GetChildren()) do
                     if item:IsA("BasePart") then
-                        table.insert(carcasses, {Object = item, Name = "Carcass"})
+                        local path = getCarcassPath(item)
+                        table.insert(carcasses, {Object = item, Name = "Carcass", Path = path})
                     end
                 end
             end
         end
         
-        -- Special carcasses
+        -- Check for special carcasses
         local specialCarcasses = {
             "Carnivore Carcass",
             "Herbivore Carcass", 
@@ -551,16 +622,37 @@ local function findCarcasses()
             local carcass = foodFolder:FindFirstChild(carcassName)
             if carcass then
                 if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                    table.insert(carcasses, {Object = carcass, Name = carcassName})
+                    local path = getCarcassPath(carcass)
+                    table.insert(carcasses, {Object = carcass, Name = carcassName, Path = path})
                 elseif carcass:IsA("Folder") then
                     for _, item in pairs(carcass:GetChildren()) do
                         if item:IsA("BasePart") then
-                            table.insert(carcasses, {Object = item, Name = carcassName})
+                            local path = getCarcassPath(item)
+                            table.insert(carcasses, {Object = item, Name = carcassName, Path = path})
                         end
                     end
                 end
             end
         end
+        
+        -- Alternative: Search for any parts in the Food folder
+        for _, item in pairs(foodFolder:GetChildren()) do
+            if item:IsA("BasePart") and string.find(item.Name:lower(), "carcass") then
+                local path = getCarcassPath(item)
+                table.insert(carcasses, {Object = item, Name = item.Name, Path = path})
+            elseif item:IsA("Model") then
+                -- Check model for parts
+                for _, part in pairs(item:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        local path = getCarcassPath(part)
+                        table.insert(carcasses, {Object = part, Name = item.Name, Path = path})
+                        break
+                    end
+                end
+            end
+        end
+    else
+        print("Food folder not found at: workspace.Interactions.Food")
     end
     
     return carcasses
@@ -570,6 +662,7 @@ local function getCarcassPosition(carcass)
     if carcass:IsA("BasePart") then
         return carcass.Position
     elseif carcass:IsA("Model") then
+        -- Try to get primary part or first part
         if carcass.PrimaryPart then
             return carcass.PrimaryPart.Position
         else
@@ -583,15 +676,24 @@ local function getCarcassPosition(carcass)
     return nil
 end
 
-local function teleportTo(position)
+local function teleportTo(position, isNewCarcass)
     if humanoidRootPart and position then
+        -- Check if character exists
         if not character or not character.Parent then
             character = player.Character or player.CharacterAdded:Wait()
             humanoidRootPart = character:WaitForChild("HumanoidRootPart")
         end
         
-        humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
-        task.wait(0.2)
+        -- Add random offset only for newly detected carcasses
+        local teleportPosition = position
+        if isNewCarcass then
+            teleportPosition = position + getRandomOffset()
+            print("New carcass detected - teleporting with random offset")
+        else
+            teleportPosition = position + Vector3.new(0, 5, 0)
+        end
+        
+        humanoidRootPart.CFrame = CFrame.new(teleportPosition)
         return true
     end
     return false
@@ -599,18 +701,31 @@ end
 
 local function pickupCarcass(carcassName, carcassObject)
     if string.find(carcassName:lower(), "carcass") then
+        -- Check if it's regular carcass
         if carcassName == "Carcass" then
-            local args = {carcassObject}
-            local success = pcall(function()
-                FoodChunkRemote:InvokeServer(unpack(args))
-            end)
-            return success
+            -- Regular carcass
+            if FoodChunkRemote then
+                local args = {carcassObject}
+                local success, result = pcall(function()
+                    return FoodChunkRemote:InvokeServer(unpack(args))
+                end)
+                if success then
+                    print("✓ Picked up Carcass")
+                    return true
+                end
+            end
         else
-            local args = {carcassObject}
-            local success = pcall(function()
-                FoodPickupRemote:InvokeServer(unpack(args))
-            end)
-            return success
+            -- Special carcasses
+            if FoodPickupRemote then
+                local args = {carcassObject}
+                local success, result = pcall(function()
+                    return FoodPickupRemote:InvokeServer(unpack(args))
+                end)
+                if success then
+                    print("✓ Picked up " .. carcassName)
+                    return true
+                end
+            end
         end
     end
     return false
@@ -618,46 +733,58 @@ end
 
 local function farmLoop()
     while isFarming do
+        -- Update character reference if needed
         if not character or not character.Parent then
             character = player.Character or player.CharacterAdded:Wait()
             humanoidRootPart = character:WaitForChild("HumanoidRootPart")
         end
         
+        -- Find carcasses
         local carcasses = findCarcasses()
-        
-        if isMinimized then
-            StatusText.Text = isFarming and #carcasses .. " 🍖" or "OFF"
-        else
-            MainButton.Text = isFarming and "STOP (" .. #carcasses .. ")" or "START"
-        end
+        StatusLabel.Text = string.format("Status: Farming\nCarcasses Found: %d", #carcasses)
         
         if #carcasses > 0 then
+            print("Found " .. #carcasses .. " carcass(es)")
+            
             for _, carcassData in pairs(carcasses) do
                 if not isFarming then break end
                 
                 local carcass = carcassData.Object
                 if carcass and carcass.Parent then
+                    -- Check if this carcass is new (not in processed list)
+                    local isNewCarcass = not processedCarcasses[carcassData.Path]
+                    
+                    -- Get position
                     local position = getCarcassPosition(carcass)
                     if position then
-                        local teleported = teleportTo(position)
+                        -- Teleport to carcass
+                        print("Teleporting to " .. carcassData.Name .. "...")
+                        local teleported = teleportTo(position, isNewCarcass)
+                        
                         if teleported then
-                            task.wait(0.3)
-                            pickupCarcass(carcassData.Name, carcass)
-                            task.wait(0.5)
+                            -- Wait the teleport delay (1.5 seconds)
+                            task.wait(teleportDelay)
+                            
+                            -- Try to pick up carcass
+                            local picked = pickupCarcass(carcassData.Name, carcass)
+                            if picked then
+                                print("Successfully picked up " .. carcassData.Name)
+                                -- Mark as processed
+                                processedCarcasses[carcassData.Path] = true
+                            else
+                                print("Failed to pick up " .. carcassData.Name)
+                            end
                         end
                     end
                 end
             end
+        else
+            print("No carcasses found in workspace.Interactions.Food")
+            -- Clear processed list when no carcasses found
+            processedCarcasses = {}
         end
         
-        task.wait(3)
-    end
-    
-    -- Update button when stopped
-    if isMinimized then
-        StatusText.Text = "OFF"
-    else
-        MainButton.Text = "START"
+        task.wait(3) -- Wait before searching again
     end
 end
 
@@ -665,51 +792,35 @@ local function toggleFarming()
     isFarming = not isFarming
     
     if isFarming then
-        MainButton.BackgroundColor3 = Color3.fromRGB(215, 60, 0)
-        print("Auto Farm STARTED")
-        coroutine.wrap(farmLoop)()
+        ToggleButton.Text = "STOP FARMING"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(215, 60, 0)
+        StatusLabel.Text = "Status: Starting farm..."
+        
+        -- Start farming in a separate coroutine
+        coroutine.wrap(function()
+            farmLoop()
+        end)()
+        
+        print("Auto Carcass Farming STARTED")
+        print("Teleport delay: " .. teleportDelay .. " seconds")
     else
-        MainButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-        print("Auto Farm STOPPED")
-    end
-end
-
-local function toggleMinimize()
-    isMinimized = not isMinimized
-    
-    if isMinimized then
-        -- Minimized mode: smaller button, only show status
-        MainButton.Size = UDim2.new(0, 60, 0, 25)
-        MainButton.Text = ""
-        StatusText.Visible = true
-        MinimizeButton.Visible = true
-        StatusText.Text = isFarming and "ON" or "OFF"
-    else
-        -- Normal mode
-        MainButton.Size = UDim2.new(0, 100, 0, 40)
-        MainButton.Text = isFarming and "STOP" or "START"
-        StatusText.Visible = false
-        MinimizeButton.Visible = false
+        ToggleButton.Text = "START FARMING"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        StatusLabel.Text = "Status: Stopped\nCarcasses: 0"
+        
+        -- Clear processed list when stopping
+        processedCarcasses = {}
+        
+        print("Auto Carcass Farming STOPPED")
     end
 end
 
 -- Button events
-MainButton.MouseButton1Click:Connect(function()
-    toggleFarming()
-end)
-
-MinimizeButton.MouseButton1Click:Connect(function()
-    toggleMinimize()
-end)
-
--- Double tap to minimize
-local lastClickTime = 0
-MainButton.MouseButton1Down:Connect(function()
-    local currentTime = tick()
-    if currentTime - lastClickTime < 0.3 then -- Double tap
-        toggleMinimize()
-    end
-    lastClickTime = currentTime
+ToggleButton.MouseButton1Click:Connect(toggleFarming)
+CloseButton.MouseButton1Click:Connect(function()
+    isFarming = false
+    ScreenGui:Destroy()
+    print("GUI Closed")
 end)
 
 -- Auto-rejoin if character dies
@@ -718,18 +829,48 @@ player.CharacterAdded:Connect(function(newChar)
     humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
 end)
 
--- Optional: Press M to minimize
+-- Keybind (optional - press F to toggle)
 local UIS = game:GetService("UserInputService")
 UIS.InputBegan:Connect(function(input, gameProcessed)
-    if input.KeyCode == Enum.KeyCode.M and not gameProcessed then
-        toggleMinimize()
+    if input.KeyCode == Enum.KeyCode.F and not gameProcessed then
+        toggleFarming()
     end
 end)
 
+-- Debug function to test the path
+local function testPath()
+    print("Testing workspace.Interactions.Food path...")
+    local success, foodFolder = pcall(function()
+        return Workspace.Interactions.Food
+    end)
+    
+    if success and foodFolder then
+        print("✓ Food folder found!")
+        print("Children in Food folder:")
+        for _, child in pairs(foodFolder:GetChildren()) do
+            print("  - " .. child.Name .. " (" .. child.ClassName .. ")")
+        end
+    else
+        print("✗ Food folder not found at workspace.Interactions.Food")
+        print("Available paths:")
+        if Workspace:FindFirstChild("Interactions") then
+            for _, child in pairs(Workspace.Interactions:GetChildren()) do
+                print("  - " .. child.Name)
+            end
+        end
+    end
+end
+
+-- Run test
+coroutine.wrap(testPath)()
+
 print("========================================")
-print("Simple Auto Farm Loaded!")
+print("Auto Carcass Farm Script Loaded!")
+print("Path: workspace.Interactions.Food")
+print("Teleport Delay: " .. teleportDelay .. " seconds")
 print("Controls:")
-print("1. Click button to Start/Stop")
-print("2. Drag button to move")
-print("3. Double-tap or press M to minimize")
+print("1. Use GUI buttons")
+print("2. Press F key to toggle farming")
+print("3. GUI is draggable")
+print("4. New carcasses will have random teleport offset")
 print("========================================")
