@@ -450,10 +450,6 @@ print("Drag the title bar to move the window")
 
 
 
-
-
-
-
 -- Auto Carcass Farm Script - Fixed Version
 -- Execute with your executor
 
@@ -556,35 +552,9 @@ CloseButton.Parent = MainFrame
 
 -- Farming variables
 local isFarming = false
-local processedCarcasses = {}
-local lastDetectionTime = 0
-local teleportDelay = 1.5 -- Changed to 1.5 seconds
-
-local function getRandomOffset()
-    -- Generate random offset between -2 and 2 on X and Z axes
-    return Vector3.new(
-        math.random(-200, 200) / 100, -- -2 to 2
-        5, -- Always 5 units above
-        math.random(-200, 200) / 100  -- -2 to 2
-    )
-end
-
-local function getCarcassPath(carcass)
-    -- Get the full path of the carcass for tracking
-    local path = ""
-    local parent = carcass
-    
-    while parent and parent ~= Workspace do
-        path = parent.Name .. "/" .. path
-        parent = parent.Parent
-    end
-    
-    return "Workspace/" .. path .. carcass.Name
-end
 
 local function findCarcasses()
     local carcasses = {}
-    processedCarcasses = {}
     
     -- Check if the food folder exists
     local success, foodFolder = pcall(function()
@@ -597,14 +567,12 @@ local function findCarcasses()
         if carcass then
             -- Check if it's a model/part or a folder
             if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                local path = getCarcassPath(carcass)
-                table.insert(carcasses, {Object = carcass, Name = "Carcass", Path = path})
+                table.insert(carcasses, {Object = carcass, Name = "Carcass"})
             elseif carcass:IsA("Folder") then
                 -- If it's a folder, get all parts inside
                 for _, item in pairs(carcass:GetChildren()) do
                     if item:IsA("BasePart") then
-                        local path = getCarcassPath(item)
-                        table.insert(carcasses, {Object = item, Name = "Carcass", Path = path})
+                        table.insert(carcasses, {Object = item, Name = "Carcass"})
                     end
                 end
             end
@@ -622,13 +590,11 @@ local function findCarcasses()
             local carcass = foodFolder:FindFirstChild(carcassName)
             if carcass then
                 if carcass:IsA("Model") or carcass:IsA("BasePart") then
-                    local path = getCarcassPath(carcass)
-                    table.insert(carcasses, {Object = carcass, Name = carcassName, Path = path})
+                    table.insert(carcasses, {Object = carcass, Name = carcassName})
                 elseif carcass:IsA("Folder") then
                     for _, item in pairs(carcass:GetChildren()) do
                         if item:IsA("BasePart") then
-                            local path = getCarcassPath(item)
-                            table.insert(carcasses, {Object = item, Name = carcassName, Path = path})
+                            table.insert(carcasses, {Object = item, Name = carcassName})
                         end
                     end
                 end
@@ -638,14 +604,12 @@ local function findCarcasses()
         -- Alternative: Search for any parts in the Food folder
         for _, item in pairs(foodFolder:GetChildren()) do
             if item:IsA("BasePart") and string.find(item.Name:lower(), "carcass") then
-                local path = getCarcassPath(item)
-                table.insert(carcasses, {Object = item, Name = item.Name, Path = path})
+                table.insert(carcasses, {Object = item, Name = item.Name})
             elseif item:IsA("Model") then
                 -- Check model for parts
                 for _, part in pairs(item:GetChildren()) do
                     if part:IsA("BasePart") then
-                        local path = getCarcassPath(part)
-                        table.insert(carcasses, {Object = part, Name = item.Name, Path = path})
+                        table.insert(carcasses, {Object = part, Name = item.Name})
                         break
                     end
                 end
@@ -676,7 +640,7 @@ local function getCarcassPosition(carcass)
     return nil
 end
 
-local function teleportTo(position, isNewCarcass)
+local function teleportTo(position)
     if humanoidRootPart and position then
         -- Check if character exists
         if not character or not character.Parent then
@@ -684,16 +648,9 @@ local function teleportTo(position, isNewCarcass)
             humanoidRootPart = character:WaitForChild("HumanoidRootPart")
         end
         
-        -- Add random offset only for newly detected carcasses
-        local teleportPosition = position
-        if isNewCarcass then
-            teleportPosition = position + getRandomOffset()
-            print("New carcass detected - teleporting with random offset")
-        else
-            teleportPosition = position + Vector3.new(0, 5, 0)
-        end
-        
-        humanoidRootPart.CFrame = CFrame.new(teleportPosition)
+        -- Teleport slightly above the position
+        humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
+        task.wait(1.5) -- CHANGED: Wait 1.5 seconds for teleport
         return true
     end
     return false
@@ -751,37 +708,31 @@ local function farmLoop()
                 
                 local carcass = carcassData.Object
                 if carcass and carcass.Parent then
-                    -- Check if this carcass is new (not in processed list)
-                    local isNewCarcass = not processedCarcasses[carcassData.Path]
-                    
                     -- Get position
                     local position = getCarcassPosition(carcass)
                     if position then
                         -- Teleport to carcass
                         print("Teleporting to " .. carcassData.Name .. "...")
-                        local teleported = teleportTo(position, isNewCarcass)
+                        local teleported = teleportTo(position)
                         
                         if teleported then
-                            -- Wait the teleport delay (1.5 seconds)
-                            task.wait(teleportDelay)
+                            task.wait(0.3) -- Wait for teleport to complete
                             
                             -- Try to pick up carcass
                             local picked = pickupCarcass(carcassData.Name, carcass)
                             if picked then
                                 print("Successfully picked up " .. carcassData.Name)
-                                -- Mark as processed
-                                processedCarcasses[carcassData.Path] = true
                             else
                                 print("Failed to pick up " .. carcassData.Name)
                             end
+                            
+                            task.wait(0.5) -- Cooldown between pickups
                         end
                     end
                 end
             end
         else
             print("No carcasses found in workspace.Interactions.Food")
-            -- Clear processed list when no carcasses found
-            processedCarcasses = {}
         end
         
         task.wait(3) -- Wait before searching again
@@ -802,14 +753,10 @@ local function toggleFarming()
         end)()
         
         print("Auto Carcass Farming STARTED")
-        print("Teleport delay: " .. teleportDelay .. " seconds")
     else
         ToggleButton.Text = "START FARMING"
         ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         StatusLabel.Text = "Status: Stopped\nCarcasses: 0"
-        
-        -- Clear processed list when stopping
-        processedCarcasses = {}
         
         print("Auto Carcass Farming STOPPED")
     end
@@ -867,10 +814,8 @@ coroutine.wrap(testPath)()
 print("========================================")
 print("Auto Carcass Farm Script Loaded!")
 print("Path: workspace.Interactions.Food")
-print("Teleport Delay: " .. teleportDelay .. " seconds")
 print("Controls:")
 print("1. Use GUI buttons")
 print("2. Press F key to toggle farming")
 print("3. GUI is draggable")
-print("4. New carcasses will have random teleport offset")
 print("========================================")
